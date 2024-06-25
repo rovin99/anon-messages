@@ -7,4 +7,4 @@ function page(){
         </div>
     )
 }
-export default page;  //exporting the component so that it can be used in other files.
+export default page;  //exporting the component so that it can be used in other files. 

@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import UserModel from '@/model/User';
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 import dbConnect from "@/lib/dbConnect";
-
+import { createSuccessResponse, createErrorResponse } from '@/utils/responseUtils';
 export async function POST(request: Request) {
 
     await dbConnect()
@@ -18,13 +18,10 @@ export async function POST(request: Request) {
           });
 
           if (existingVerifiedUserByUsername) {
-            return Response.json(
-              {
-                success: false,
-                message: 'Username is already taken',
-              },
-              { status: 400 }
-            );
+            
+            return createErrorResponse(
+                'Username is already taken', 400
+              );
           }
 
           //if Email exist and verified return false 
@@ -37,13 +34,10 @@ export async function POST(request: Request) {
 
             if (existingUserByEmail) {
                 if (existingUserByEmail.isVerified) {
-                    return Response.json(
-                        {
-                            success: false,
-                            message: 'Email is already taken',
-                        },
-                        { status: 400 }
-                    );
+                    return createErrorResponse(
+                        'Email is already taken', 400
+                      );
+                    
 
                 } 
                 //if Email exist and unverified, save a new user(unverified by default)
@@ -82,31 +76,15 @@ export async function POST(request: Request) {
             verifyCode
         );
         if (!emailResponse.success) {
-            return Response.json(
-            {
-                success: false,
-                message: emailResponse.message,
-            },
-            { status: 500 }
-            );
+            return createErrorResponse(
+                'Error sending verification email', 500
+              );
         }
     
-        return Response.json(
-            {
-            success: true,
-            message: 'User registered successfully. Please verify your account.',
-            },
-            { status: 201 }
-        );
+        return createSuccessResponse('User registered successfully');
         } catch (error) {
-        console.error('Error registering user:', error);
-        return Response.json(
-            {
-            success: false,
-            message: 'Error registering user',
-            },
-            { status: 500 }
-        );
+            console.error('Error registering user:', error);
+            return createErrorResponse('Internal server error', 500);
         }
 
     
