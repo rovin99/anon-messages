@@ -6,8 +6,8 @@ import { ApiResponse } from '@/types/ApiResponse';
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'rovin9325@gmail.com',
-    pass: 'bbei luaz fzfb xmdv'  // Use an app password, not your regular password
+    user: process.env.EMAIL_ID,
+    pass:  process.env.APP_PASS // Use an app password, not your regular password
   }
 });
 
@@ -26,7 +26,7 @@ export async function sendVerificationEmail(
   
 
     await transporter.sendMail({
-      from: 'rovin9325@gmail.com',
+      from: process.env.EMAIL_ID,
       to: email,
       subject: 'Anon Message Verification Code',
       html: emailHtml,
